@@ -1,264 +1,186 @@
-# 🏦 PrimeBank - Complete Secure Banking System
+# 🏦 PrimeBank - Secure Online Banking System
 
-[![PHP Version](https://img.shields.io/badge/PHP-7.4%2B-blue.svg)](https://php.net)
-[![MySQL Version](https://img.shields.io/badge/MySQL-5.7%2B-blue.svg)](https://mysql.com)
-[![JavaScript](https://img.shields.io/badge/JavaScript-ES6-yellow.svg)](https://javascript.com)
-[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+A full-stack **web-based banking system** built using PHP, MySQL, JavaScript, HTML, and CSS.  
+This project simulates real-world banking operations including authentication, transactions, OTP verification, and email notifications.
 
-A **complete, production-ready online banking system** with email OTP verification, real-time transactions, UPI QR code, PDF statements, and professional UI. Perfect for learning full-stack development or as a banking solution prototype.
+---
 
-## 📸 Screenshots
-
-| Dashboard | Statement | Transfer | Profile |
-|-----------|-----------|----------|---------|
-| <img src="https://via.placeholder.com/400x250?text=Dashboard+View" width="100%"> | <img src="https://via.placeholder.com/400x250?text=Statement+Page" width="100%"> | <img src="https://via.placeholder.com/400x250?text=Transfer+Page" width="100%"> | <img src="https://via.placeholder.com/400x250?text=Profile+Page" width="100%"> |
-
-## ✨ Features
+## 🚀 Features
 
 ### 🔐 Authentication & Security
-- User registration with email OTP verification
-- Secure login with password + OTP (2-Factor Authentication)
-- Session management with PHP sessions
-- Password change with email notification
-- Transaction PIN for secure money transfers
-- bcrypt password hashing
+- User registration with Email OTP verification
+- Secure login with Password + OTP (2FA)
+- Password hashing using bcrypt
+- Session management
+- Transaction PIN for secure transfers
 
-### 💰 Money Management
-- Add money to account (₹1 - ₹100,000)
-- Send money to other users via:
+### 💰 Transactions
+- Add money (simulation)
+- Send money using:
   - Account Number
   - Phone Number
   - UPI ID
 - Real-time balance updates
-- Transaction PIN verification for transfers
+- Transaction records stored in database
 
 ### 📊 Banking Features
-- Complete transaction history
-- Account statement with date filtering
-- PDF download for statements
-- UPI QR code generation for payments
-- Transaction summary (Total Credits/Debits)
-- Recent transactions display
+- Transaction history (statement)
+- Credit/Debit tracking
+- PDF statement download
+- UPI QR code support
 
 ### 👤 Profile Management
-- View personal information
-- Update profile (Name, Phone)
+- Update user details
 - Change password
 - Set/Reset transaction PIN
-- View UPI ID and Account Number
 
 ### 📧 Email Notifications
-- Welcome email on registration
-- OTP for login verification
+- OTP verification
+- Login alerts
 - Money sent/received alerts
-- Password change confirmation
-- PIN set/reset confirmation
+- Password change alerts
 
-## 🛠️ Technology Stack
+---
+
+## 🛠️ Tech Stack
 
 ### Frontend
-| Technology | Purpose |
-|------------|---------|
-| HTML5 | Structure & Layout |
-| CSS3 | Styling & Animations |
-| JavaScript (ES6) | Dynamic functionality |
-| Font Awesome 6 | Icons |
-| Google Fonts (Inter) | Typography |
-| QRCode.js | QR code generation |
-| html2pdf.js | PDF export |
+- HTML5
+- CSS3
+- JavaScript (ES6)
 
 ### Backend
-| Technology | Purpose |
-|------------|---------|
-| PHP 7.4+ | Server-side logic |
-| MySQL 5.7+ | Database management |
-| EmailJS / PHPMailer | Email sending |
-| bcrypt | Password hashing |
-| MD5 | PIN hashing |
+- PHP 7.4+
+- MySQL
 
-### Development Tools
-| Tool | Purpose |
-|------|---------|
-| XAMPP | Local server environment |
-| phpMyAdmin | Database administration |
-| Git | Version control |
+### Tools & Libraries
+- PHPMailer (Email)
+- QRCode.js
+- html2pdf.js
+- XAMPP
+
+---
 
 ## 📁 Project Structure
 primebank/
-├── index.html # Main application file
-├── README.md # Documentation
-├── LICENSE # MIT License
-├── css/
-│ └── style.css # Styling (embedded in index.html)
-├── js/
-│ └── script.js # Client-side logic (embedded)
-├── php/
-│ ├── config.php # Database & email configuration
-│ ├── register.php # User registration API
-│ ├── login.php # Login authentication API
-│ ├── send_otp.php # OTP sending API
-│ ├── get_user.php # Fetch user details
-│ ├── get_transactions.php # Transaction history API
-│ ├── add_money.php # Add funds API
-│ ├── send_money.php # Money transfer API
-│ ├── set_txn_pin.php # PIN management API
-│ ├── change_password.php # Password update API
-│ ├── update_profile.php # Profile update API
-│ └── logout.php # Session destroy API
-├── sql/
-│ └── database.sql # Database schema
-└── vendor/ # PHPMailer library (composer)
+│── index.html
+│── css/
+│── js/
+│── php/
+│── sql/
+│── vendor/
+│── README.md
 
 
-## 🚀 Installation Guide
+---
 
-### Prerequisites
+## ⚙️ Installation Guide
 
-| Requirement | Version | Download Link |
-|-------------|---------|---------------|
-| XAMPP | 7.4+ | [https://www.apachefriends.org/](https://www.apachefriends.org/) |
-| Web Browser | Latest | Chrome/Firefox/Edge |
-| Gmail Account | - | [https://gmail.com](https://gmail.com) |
-| Internet Connection | - | For email services |
+### 1. Setup XAMPP
+- Install XAMPP
+- Start Apache & MySQL
 
-### Step 1: Install XAMPP
+---
 
-1. Download XAMPP from [https://www.apachefriends.org/](https://www.apachefriends.org/)
-2. Run the installer with default settings
-3. Launch XAMPP Control Panel
-4. Start **Apache** and **MySQL** services
+### 2. Clone Repository
 
-### Step 2: Download Project
-
-**Option A: Clone with Git**
 ```bash
 cd C:\xampp\htdocs
-git clone https://github.com/yourusername/primebank.git
+git clone https://github.com/rishabh-verma45/Prime_bank.git
+```
+3. Setup Database
+Open: http://localhost/phpmyadmin
+Create database: primebank_db
+Import: primebank/sql/database.sql
 
-Option B: Manual Download
+4. Configure Email
 
-Download ZIP from GitHub
+Edit: php/config.php
+define('SMTP_USER', 'your_email@gmail.com');
+define('SMTP_PASS', 'your_app_password');
 
-Extract to C:\xampp\htdocs\primebank\
-
-Step 3: Setup Database
-Open phpMyAdmin: http://localhost/phpmyadmin
-
-Click "New" to create database
-
-Database name: primebank_db
-
-Collation: utf8mb4_general_ci
-
-Click "Create"
-
-Go to "Import" tab
-
-Select file: primebank/sql/database.sql
-
-Click "Go"
-
-Step 4: Configure Email (Gmail)
-Generate Gmail App Password:
-
-Go to Google Account Security
-
-Enable 2-Step Verification
-
-Go to App Passwords
-
-Select app: "Mail"
-
-Select device: "Other" (name it "PrimeBank")
-
-Copy the 16-digit password
-
-Update php/config.php:
-
-php
-// Find these lines and update
-define('SMTP_USER', 'your_email@gmail.com');     // Your Gmail
-define('SMTP_PASS', 'your_16_digit_password');   // App password
-Step 5: Install PHPMailer
-Using Composer (Recommended):
-
-bash
-cd C:\xampp\htdocs\primebank
+5. Install PHPMailer
 composer require phpmailer/phpmailer
-Manual Installation:
 
-Download from https://github.com/PHPMailer/PHPMailer
-
-Extract to primebank/vendor/ folder
-
-Step 6: Run Application
-Open your browser and navigate to:
-
-text
+6. Run Project
 http://localhost/primebank/
-🔑 Default Login Credentials
-Account Type	Email	Password	Transaction PIN
-Demo User	demo@primebank.com	demo123	1234
-Test Recipient	test@primebank.com	test123	Not set
-📖 Usage Guide
-For End Users
-1. Registration
-text
-1. Click "Create New Account"
-2. Fill in your details (Name, Email, Phone, Password)
-3. Click "Send OTP" - Check your email for 6-digit code
-4. Enter OTP and click "Register"
-5. Login with your credentials
-2. Adding Money
-text
-1. Login to your dashboard
-2. Click "Add Money" button
-3. Enter amount (₹1 - ₹100,000)
-4. Click "Add Money"
-5. Balance updates instantly ✓
-3. Sending Money
-text
-1. Go to "Transfer" page from sidebar
-2. Select send via:
-   • Account Number
-   • Phone Number  
-   • UPI ID
-3. Enter recipient details
-4. Enter amount (use quick buttons for common amounts)
-5. Enter your Transaction PIN
-6. Click "Send Money"
-7. Both parties receive email confirmation ✓
-4. View Statement
-text
-1. Go to "Statement" page
-2. Select date range (From Date - To Date)
-3. Click "Apply Filter"
-4. View filtered transactions
-5. Click "Download PDF" to save statement
-5. Set Transaction PIN
-text
-1. Go to "Reset PIN" page
-2. View current PIN status
-3. Enter new PIN (4-6 digits only)
-4. Confirm PIN
-5. Click "Set Transaction PIN"
-6. Receive email confirmation ✓
-6. Update Profile
-text
-1. Go to "Profile" page
-2. Edit Name or Phone number
-3. Click "Update Profile"
-4. Changes saved instantly ✓
-7. Change Password
-text
-1. Go to "Profile" page
-2. Enter current password
-3. Enter new password (min 4 characters)
-4. Confirm new password
-5. Click "Change Password"
-6. Receive email confirmation ✓
-8. UPI QR Code
-text
-1. Dashboard displays your UPI QR code
-2. Scan with any UPI app (Google Pay, PhonePe, Paytm)
-3. Enter amount and pay directly
+
+🔑 Demo Credentials
+Type	Email	Password	PIN
+Demo User	demo@primebank.com
+	demo123	1234
+📖 Usage
+Register
+Enter details
+Verify OTP
+Login
+Transfer Money
+Choose method (Account / Phone / UPI)
+Enter amount
+Enter PIN
+Confirm
+View Statement
+Filter by date
+Download PDF
+⚠️ Limitations
+Not connected to real banking APIs
+Email-based OTP only (no SMS)
+No advanced fraud detection
+Not production-secure
+🔥 Future Improvements
+Payment gateway integration
+SMS OTP system
+AI fraud detection
+Mobile app version
+📜 License
+
+This project is licensed under the MIT License.
+
+👨‍💻 Author
+
+Rishabh Verma
+
+---
+
+# 🔥 Brutal Feedback on Your Original README
+
+From your file :contentReference[oaicite:0]{index=0}:
+
+### ❌ Problems:
+- Mixed formatting (markdown broken in places)
+- Too long without hierarchy
+- Installation steps messy
+- Some sections look inflated (“production-ready” — not true)
+
+### ✅ Fixes I made:
+- Clean structure
+- Proper headings
+- Realistic claims
+- Better readability for GitHub
+
+---
+
+# 💣 Reality Check
+
+Don’t call this:
+> “production-ready banking system”
+
+It’s not. It’s:
+👉 **A strong academic + portfolio project**
+
+If you oversell it, anyone technical will tear it apart in 2 minutes.
+
+---
+
+# 👉 Next Step (Important)
+
+Now that your repo is fixed, you should:
+
+- Add screenshots (real ones, not placeholders)
+- Add `.env` file support (hide credentials)
+- Add proper commit history (not one big dump)
+
+---
+
+If you want:
+👉 I can review your **actual GitHub repo** and tell you exactly what will impress recruiters vs what will expose you.
