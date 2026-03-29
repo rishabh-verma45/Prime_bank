@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PrimeBank - Secure Banking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Inter', sans-serif; background: #f5f7fa; color: #1a1a2e; }
+
+        .toast {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #1e293b;
+            color: white;
+            padding: 14px 24px;
+            border-radius: 12px;
+            z-index: 10000;
+            transform: translateX(120%);
+            transition: transform 0.3s ease;
+            font-size: 14px;
+        }
+        .toast.show { transform: translateX(0); }
+        .toast.error { background: #dc2626; }
+        .toast.success { background: #10b981; }
+
+        .auth-container {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+        .auth-card {
+            background: white;
+            border-radius: 28px;
+            padding: 40px;
+            max-width: 450px;
+            width: 100%;
+            box-shadow: 0 25px 50px -12px rgba(0,0,0,0.25);
+        }
+        .auth-logo { text-align: center; margin-bottom: 30px; }
+        .auth-logo h1 { font-size: 32px; color: #1a1a2e; }
+        .auth-logo p { color: #666; margin-top: 8px; }
+        
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; font-weight: 600; color: #333; font-size: 14px; }
+        .form-group input, .form-group select {
+            width: 100%;
+            padding: 14px 16px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 14px;
+            font-size: 14px;
+        }
+        .form-group input:focus { outline: none; border-color: #667eea; }
+        
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        .btn-primary { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; }
+        .btn-primary:hover { transform: translateY(-1px); }
+        .btn-outline { background: transparent; border: 1.5px solid #cbd5e1; color: #1e293b; }
+        .btn-outline:hover { background: #f8fafc; }
+        .btn-success { background: #10b981; color: white; }
+        .btn-success:hover { background: #059669; }
+        .btn-warning { background: #f59e0b; color: white; }
+        .btn-warning:hover { background: #d97706; }
+        
+        .otp-section {
+            background: #f8fafc;
+            padding: 16px;
+            border-radius: 14px;
+            margin-bottom: 20px;
+            display: none;
+            border-left: 3px solid #667eea;
+        }
+        .otp-group { display: flex; gap: 10px; margin-top: 8px; }
+        .otp-group input { flex: 2; text-align: center; font-size: 18px; letter-spacing: 4px; }
+        .otp-group button { flex: 1; width: auto; margin: 0; }
+        
+        .switch-link { text-align: center; margin-top: 20px; }
+        .switch-link a { color: #667eea; text-decoration: none; font-weight: 500; cursor: pointer; }
+        .info-text { font-size: 12px; color: #64748b; margin-top: 12px; text-align: center; }
+        .hidden { display: none; }
+
+        /* Dashboard */
+        .dashboard { display: none; }
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            width: 280px;
+            height: 100%;
+            background: white;
+            box-shadow: 2px 0 12px rgba(0,0,0,0.05);
+            padding: 30px 20px;
+            overflow-y: auto;
+        }
+        .logo {
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 2px solid #f0f2f5;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .nav-menu { list-style: none; }
+        .nav-item { margin-bottom: 8px; }
+        .nav-link {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 16px;
+            color: #64748b;
+            text-decoration: none;
+            border-radius: 12px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+        .nav-link:hover, .nav-link.active {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+        }
+        .nav-link i { width: 22px; }
+        
+        .main-content { margin-left: 280px; padding: 30px; }
+        .header {
+            background: white;
+            border-radius: 20px;
+            padding: 20px 25px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+        .welcome h2 { font-size: 22px; color: #1e293b; }
+        .welcome p { color: #64748b; margin-top: 5px; font-size: 13px; }
+        .user-avatar {
+            width: 48px;
+            height: 48px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: 700;
+            font-size: 18px;
+        }
+
+        /* Dashboard Grid with QR Code */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 25px;
+            margin-bottom: 25px;
+        }
+        .balance-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border-radius: 24px;
+            padding: 30px;
+            color: white;
+        }
+        .qr-card {
+            background: white;
+            border-radius: 24px;
+            padding: 20px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+        }
+        .qr-card h4 {
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+        .qr-code {
+            background: white;
+            padding: 15px;
+            border-radius: 16px;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        .upi-id {
+            font-size: 14px;
+            color: #64748b;
+            margin-top: 10px;
+        }
+        .upi-id strong {
+            color: #1e293b;
+        }
+        
+        .balance-label { font-size: 14px; opacity: 0.9; margin-bottom: 10px; }
+        .balance-amount { font-size: 48px; font-weight: 800; margin: 15px 0; }
+        .action-buttons { display: flex; gap: 15px; margin-top: 15px; flex-wrap: wrap; }
+        .action-btn {
+            background: rgba(255,255,255,0.2);
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-size: 14px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .action-btn:hover { background: rgba(255,255,255,0.3); }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+        }
+        .stat-label { font-size: 13px; color: #64748b; margin-bottom: 8px; }
+        .stat-value { font-size: 28px; font-weight: 700; color: #1e293b; }
+
+        .content-card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        .card-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #f0f2f5;
+            color: #1e293b;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .profile-info {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        .info-row { margin-bottom: 20px; }
+        .info-label { font-size: 12px; color: #64748b; margin-bottom: 5px; text-transform: uppercase; }
+        .info-value { font-size: 16px; font-weight: 600; color: #1e293b; }
+
+        .transaction-table { width: 100%; border-collapse: collapse; }
+        .transaction-table th, .transaction-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #f0f2f5;
+        }
+        .credit { color: #10b981; font-weight: 600; }
+        .debit { color: #dc2626; font-weight: 600; }
+
+        .form-row { margin-bottom: 20px; }
+        .form-row label { display: block; margin-bottom: 8px; font-weight: 600; font-size: 13px; color: #333; }
+        .form-row input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 1.5px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+        }
+        .form-row input:focus { outline: none; border-color: #667eea; }
+        
+        .amount-buttons { display: flex; gap: 10px; margin-top: 10px; flex-wrap: wrap; }
+        .amount-btn {
+            flex: 1;
+            padding: 10px;
+            background: #f1f5f9;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: 500;
+        }
+
+        .date-filter-row { display: flex; gap: 20px; margin-bottom: 20px; flex-wrap: wrap; }
+        .date-filter-row .form-row { flex: 1; margin-bottom: 0; }
+        .filter-buttons { display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap; }
+        .filter-buttons .btn { width: auto; padding: 10px 20px; }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+        .summary-card {
+            background: #f8fafc;
+            border-radius: 16px;
+            padding: 15px;
+            text-align: center;
+        }
+        .summary-label { font-size: 12px; color: #64748b; margin-bottom: 5px; }
+        .summary-value { font-size: 20px; font-weight: 700; color: #1e293b; }
+
+        /* PIN Status Card */
+        .pin-status-card {
+            background: #f8fafc;
+            border-radius: 20px;
+            padding: 25px;
+            margin-bottom: 25px;
+            text-align: center;
+            border: 1px solid #e2e8f0;
+        }
+        .pin-status-icon { font-size: 56px; margin-bottom: 15px; }
+        .pin-status-text { font-size: 20px; font-weight: 700; margin-bottom: 10px; }
+        .pin-status-message { font-size: 13px; color: #64748b; }
+
+        /* Modern Modal */
+        .modern-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10001;
+            animation: fadeIn 0.2s ease;
+        }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(50px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        
+        .modal-content {
+            background: white;
+            border-radius: 32px;
+            max-width: 480px;
+            width: 90%;
+            animation: slideUp 0.3s ease;
+            overflow: hidden;
+        }
+        .modal-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 24px 28px;
+            color: white;
+        }
+        .modal-header h3 { font-size: 24px; font-weight: 700; display: flex; align-items: center; gap: 12px; }
+        .modal-body { padding: 28px; }
+        .modal-footer {
+            padding: 20px 28px;
+            background: #f8fafc;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+            border-top: 1px solid #e2e8f0;
+        }
+        .modal-footer .btn { width: auto; padding: 12px 24px; }
+        
+        .current-balance {
+            background: #f0fdf4;
+            padding: 18px;
+            border-radius: 20px;
+            margin-bottom: 24px;
+            text-align: center;
+        }
+        .current-balance .amount { font-size: 28px; font-weight: 800; color: #10b981; }
+        
+        .quick-amount-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .quick-amount-item {
+            padding: 12px;
+            background: #f1f5f9;
+            border-radius: 40px;
+            text-align: center;
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .quick-amount-item:hover { background: #667eea; color: white; }
+
+        @media (max-width: 768px) {
+            .sidebar { width: 80px; padding: 20px 10px; }
+            .sidebar .logo span, .sidebar .nav-link span { display: none; }
+            .main-content { margin-left: 80px; }
+            .dashboard-grid { grid-template-columns: 1fr; }
+            .stats-grid, .summary-grid { grid-template-columns: repeat(2, 1fr); }
+            .profile-info { grid-template-columns: 1fr; }
+            .date-filter-row { flex-direction: column; }
+        }
+    </style>
+</head>
+<body>
+
+<div id="toast" class="toast"></div>
+
+<!-- Auth Container -->
+<div id="authContainer" class="auth-container">
+    <div class="auth-card">
+        <div class="auth-logo">
+            <h1>🏦 PrimeBank</h1>
+            <p>Secure Banking with Email OTP</p>
+        </div>
+        
+        <div id="loginFormDiv">
+            <div class="form-group"><label>Email Address</label><input type="email" id="loginEmail" placeholder="Enter your email"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="loginPassword" placeholder="Enter your password"></div>
+            <div id="otpSection" class="otp-section">
+                <label>OTP Verification</label>
+                <div class="otp-group">
+                    <input type="text" id="loginOtp" placeholder="6-digit OTP" maxlength="6">
+                    <button type="button" class="btn btn-outline" id="resendOtpBtn">Resend</button>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="loginBtn" style="width: 100%;">Login</button>
+            <div class="switch-link"><a id="showRegisterLink">Create New Account</a></div>
+            <div class="info-text">Demo: demo@primebank.com / demo123</div>
+        </div>
+
+        <div id="registerFormDiv" class="hidden">
+            <div class="form-group"><label>Full Name</label><input type="text" id="regName"></div>
+            <div class="form-group"><label>Email Address</label><input type="email" id="regEmail"></div>
+            <div class="form-group"><label>Phone Number</label><input type="tel" id="regPhone"></div>
+            <div class="form-group"><label>Password</label><input type="password" id="regPassword"></div>
+            <div class="otp-section" style="display: block;">
+                <div class="otp-group">
+                    <input type="text" id="regOtp" placeholder="Enter OTP" maxlength="6">
+                    <button type="button" class="btn btn-outline" id="sendRegOtpBtn">Send OTP</button>
+                </div>
+            </div>
+            <button class="btn btn-primary" id="registerBtn" style="width: 100%;">Register</button>
+            <div class="switch-link"><a id="showLoginLink">Back to Login</a></div>
+        </div>
+    </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" class="dashboard">
+    <div class="sidebar">
+        <div class="logo">🏦 PrimeBank</div>
+        <ul class="nav-menu">
+            <li class="nav-item"><a class="nav-link active" data-page="dashboard"><i class="fas fa-tachometer-alt"></i> <span>Dashboard</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-page="profile"><i class="fas fa-user-circle"></i> <span>Profile</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-page="statement"><i class="fas fa-file-alt"></i> <span>Statement</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-page="transfer"><i class="fas fa-exchange-alt"></i> <span>Transfer</span></a></li>
+            <li class="nav-item"><a class="nav-link" data-page="resetpin"><i class="fas fa-key"></i> <span>Reset PIN</span></a></li>
+            <li class="nav-item"><a class="nav-link" id="logoutBtn"><i class="fas fa-sign-out-alt"></i> <span>Logout</span></a></li>
+        </ul>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <div class="welcome">
+                <h2>Welcome, <span id="userName">User</span>!</h2>
+                <p>Account: <span id="accountNumber">-</span></p>
+            </div>
+            <div class="user-avatar" id="userAvatar">U</div>
+        </div>
+
+        <!-- Dashboard Page -->
+        <div id="dashboardPage">
+            <div class="dashboard-grid">
+                <div class="balance-card">
+                    <div class="balance-label">Available Balance</div>
+                    <div class="balance-amount">₹ <span id="balanceAmount">0</span></div>
+                    <div class="action-buttons">
+                        <div class="action-btn" id="addMoneyBtn"><i class="fas fa-plus"></i> Add Money</div>
+                        <div class="action-btn" id="sendMoneyNavBtn"><i class="fas fa-paper-plane"></i> Send Money</div>
+                    </div>
+                </div>
+                
+                <!-- UPI QR Code Card -->
+                <div class="qr-card">
+                    <h4><i class="fas fa-qrcode"></i> Scan & Pay</h4>
+                    <div class="qr-code" id="qrCodeContainer">
+                        <canvas id="qrCanvas" width="150" height="150"></canvas>
+                    </div>
+                    <div class="upi-id">
+                        <i class="fas fa-id-card"></i> <strong>UPI ID:</strong> <span id="upiIdDisplay">-</span>
+                    </div>
+                    <div class="info-text" style="margin-top: 10px;">
+                        Scan this QR code with any UPI app to pay
+                    </div>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                <div class="stat-card"><div class="stat-label">Total Credits</div><div class="stat-value">+ ₹ <span id="totalCredits">0</span></div></div>
+                <div class="stat-card"><div class="stat-label">Total Debits</div><div class="stat-value">- ₹ <span id="totalDebits">0</span></div></div>
+                <div class="stat-card"><div class="stat-label">Account Type</div><div class="stat-value">Premium</div></div>
+                <div class="stat-card"><div class="stat-label">Member Since</div><div class="stat-value" id="memberSince">2026</div></div>
+            </div>
+
+            <div class="content-card">
+                <div class="card-title">Recent Transactions</div>
+                <table class="transaction-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+                <tbody id="recentTransactionsBody"><tr><td colspan="3">No transactions</td</tr></tbody></table>
+            </div>
+        </div>
+
+        <!-- Profile Page -->
+        <div id="profilePage" class="hidden">
+            <div class="content-card">
+                <div class="card-title">Personal Information</div>
+                <div class="profile-info">
+                    <div><div class="info-label">Full Name</div><div class="info-value" id="profileName">-</div></div>
+                    <div><div class="info-label">Email</div><div class="info-value" id="profileEmail">-</div></div>
+                    <div><div class="info-label">Phone</div><div class="info-value" id="profilePhone">-</div></div>
+                    <div><div class="info-label">Account Number</div><div class="info-value" id="profileAccount">-</div></div>
+                    <div><div class="info-label">UPI ID</div><div class="info-value" id="profileUpi">-</div></div>
+                </div>
+            </div>
+            <div class="content-card">
+                <div class="card-title">Update Profile</div>
+                <div class="form-row"><label>Full Name</label><input type="text" id="editName"></div>
+                <div class="form-row"><label>Phone Number</label><input type="tel" id="editPhone"></div>
+                <button class="btn btn-primary" id="updateProfileBtn">Update Profile</button>
+            </div>
+            <div class="content-card">
+                <div class="card-title">Change Password</div>
+                <div class="form-row"><label>Current Password</label><input type="password" id="currentPassword"></div>
+                <div class="form-row"><label>New Password</label><input type="password" id="newPassword"></div>
+                <div class="form-row"><label>Confirm Password</label><input type="password" id="confirmPassword"></div>
+                <button class="btn btn-primary" id="changePwdBtn">Change Password</button>
+            </div>
+        </div>
+
+        <!-- Statement Page -->
+        <div id="statementPage" class="hidden">
+            <div class="content-card">
+                <div class="card-title">
+                    Account Statement
+                    <div>
+                        <button class="btn btn-outline" id="downloadPdfBtn" style="width: auto; padding: 8px 16px;">
+                            <i class="fas fa-file-pdf"></i> Download PDF
+                        </button>
+                    </div>
+                </div>
+                <div id="statementContent">
+                    <p><strong>Account Holder:</strong> <span id="statementName">-</span> | <strong>Account:</strong> <span id="statementAccount">-</span></p>
+                    <div style="display: flex; gap: 20px; margin: 20px 0; flex-wrap: wrap;">
+                        <div><label>From Date</label><input type="date" id="fromDate"></div>
+                        <div><label>To Date</label><input type="date" id="toDate"></div>
+                    </div>
+                    <div style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <button class="btn btn-primary" id="applyFilterBtn">Apply Filter</button>
+                        <button class="btn btn-outline" id="resetFilterBtn">Reset</button>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(4,1fr); gap: 15px; margin-bottom: 20px;">
+                        <div class="stat-card"><div class="stat-label">Opening</div><div class="stat-value">₹ <span id="openingBalance">0</span></div></div>
+                        <div class="stat-card"><div class="stat-label">Credits</div><div class="stat-value credit">+ ₹ <span id="statementTotalCredits">0</span></div></div>
+                        <div class="stat-card"><div class="stat-label">Debits</div><div class="stat-value debit">- ₹ <span id="statementTotalDebits">0</span></div></div>
+                        <div class="stat-card"><div class="stat-label">Closing</div><div class="stat-value">₹ <span id="closingBalance">0</span></div></div>
+                    </div>
+                    <table class="transaction-table" id="statementTable">
+                        <thead><tr><th>Date</th><th>Description</th><th>Reference ID</th><th>Amount</th><th>Balance</th></tr></thead>
+                        <tbody id="statementBody"><tr><td colspan="5">Select date range and click Apply Filter</td></tr></tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <!-- Transfer Page -->
+        <div id="transferPage" class="hidden">
+            <div class="content-card">
+                <div class="card-title">Send Money</div>
+                <div class="form-row">
+                    <label>Send via</label>
+                    <select id="transferMethod">
+                        <option value="account">Account Number</option>
+                        <option value="phone">Phone Number</option>
+                        <option value="upi">UPI ID</option>
+                    </select>
+                </div>
+                <div class="form-row"><label>Recipient</label><input type="text" id="recipientId" placeholder="Enter account/phone/UPI"></div>
+                <div class="form-row"><label>Amount (₹)</label><input type="number" id="transferAmount">
+                    <div class="amount-buttons">
+                        <button class="amount-btn" data-amount="100">₹100</button>
+                        <button class="amount-btn" data-amount="500">₹500</button>
+                        <button class="amount-btn" data-amount="1000">₹1,000</button>
+                        <button class="amount-btn" data-amount="5000">₹5,000</button>
+                    </div>
+                </div>
+                <div class="form-row"><label>Transaction PIN</label><input type="password" id="transactionPin" maxlength="6"></div>
+                <button class="btn btn-primary" id="sendMoneyBtn">Send Money</button>
+            </div>
+            <div class="content-card">
+                <div class="card-title">Recent Transfers</div>
+                <table class="transaction-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
+                <tbody id="transferRecentBody"><tr><td colspan="3">No transfers</td></tr></tbody></table>
+            </div>
+        </div>
+
+        <!-- Reset PIN Page -->
+        <div id="resetpinPage" class="hidden">
+            <div class="content-card">
+                <div class="card-title"><i class="fas fa-key"></i> Transaction PIN Management</div>
+                <div id="pinStatusCard" class="pin-status-card">
+                    <div id="pinStatusIcon" class="pin-status-icon"><i class="fas fa-spinner fa-spin" style="color: #667eea;"></i></div>
+                    <div id="pinStatusText" class="pin-status-text">Checking PIN status...</div>
+                    <div id="pinStatusMessage" class="pin-status-message">Please wait</div>
+                </div>
+                <div class="form-row">
+                    <label>New Transaction PIN (4-6 digits)</label>
+                    <input type="password" id="newTxnPin" placeholder="Enter 4-6 digit PIN" maxlength="6" autocomplete="off">
+                    <small style="color: #64748b;">Numbers only (0-9)</small>
+                </div>
+                <div class="form-row">
+                    <label>Confirm Transaction PIN</label>
+                    <input type="password" id="confirmTxnPin" placeholder="Confirm your PIN" maxlength="6" autocomplete="off">
+                </div>
+                <button class="btn btn-primary" id="setPinBtn" style="width: auto; padding: 12px 40px;">
+                    <i class="fas fa-check-circle"></i> Set Transaction PIN
+                </button>
+                <div class="info-text" style="margin-top: 20px; text-align: left;">
+                    <i class="fas fa-shield-alt"></i> <strong>Security Tips:</strong><br>
+                    • Your PIN is securely encrypted<br>
+                    • Never share your PIN with anyone<br>
+                    • Use 4-6 digits only
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+const API_BASE = '/primebank/php/';
+let currentUser = null;
+let otpSent = false;
+let allTransactions = [];
+let qrCode = null;
+
+function showToast(msg, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = 'toast';
+    if (isError) toast.classList.add('error');
+    else toast.classList.add('success');
+    toast.classList.add('show');
+    setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+async function apiRequest(endpoint, data) {
+    try {
+        const response = await fetch(API_BASE + endpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data)
+        });
+        return await response.json();
+    } catch (error) {
+        showToast('Network error', true);
+        return null;
+    }
+}
+
+// Generate QR Code
+function generateQRCode(upiId, name, amount = '') {
+    // UPI QR Code format: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=INR
+    let upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&cu=INR`;
+    if (amount && amount > 0) {
+        upiUrl += `&am=${amount}`;
+    }
+    
+    const qrContainer = document.getElementById('qrCodeContainer');
+    qrContainer.innerHTML = '';
+    new QRCode(qrContainer, {
+        text: upiUrl,
+        width: 150,
+        height: 150,
+        colorDark: "#1a1a2e",
+        colorLight: "#ffffff",
+        correctLevel: QRCode.CorrectLevel.H
+    });
+}
+
+// Download PDF
+function downloadPDF() {
+    const element = document.getElementById('statementContent');
+    const opt = {
+        margin: [0.5, 0.5, 0.5, 0.5],
+        filename: `PrimeBank_Statement_${currentUser?.account_number}_${new Date().toISOString().split('T')[0]}.pdf`,
+        image: { type: 'jpeg', quality: 0.98 },
+        html2canvas: { scale: 2, letterRendering: true },
+        jsPDF: { unit: 'in', format: 'a4', orientation: 'portrait' }
+    };
+    html2pdf().set(opt).from(element).save();
+}
+
+// Navigation
+document.querySelectorAll('.nav-link[data-page]').forEach(link => {
+    link.addEventListener('click', () => {
+        const page = link.getAttribute('data-page');
+        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+        link.classList.add('active');
+        document.getElementById('dashboardPage').classList.add('hidden');
+        document.getElementById('profilePage').classList.add('hidden');
+        document.getElementById('statementPage').classList.add('hidden');
+        document.getElementById('transferPage').classList.add('hidden');
+        document.getElementById('resetpinPage').classList.add('hidden');
+        document.getElementById(page + 'Page').classList.remove('hidden');
+        
+        if (page === 'statement') { setDefaultDates(); loadStatement(); }
+        if (page === 'resetpin') { updatePinDisplay(); }
+    });
+});
+
+// Amount buttons
+document.querySelectorAll('.amount-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+        document.getElementById('transferAmount').value = btn.getAttribute('data-amount');
+    });
+});
+
+// Update PIN Display
+function updatePinDisplay() {
+    const iconDiv = document.getElementById('pinStatusIcon');
+    const textDiv = document.getElementById('pinStatusText');
+    const msgDiv = document.getElementById('pinStatusMessage');
+    const setBtn = document.getElementById('setPinBtn');
+    
+    if (currentUser && currentUser.has_txn_pin === 1) {
+        iconDiv.innerHTML = '<i class="fas fa-check-circle" style="color: #10b981;"></i>';
+        textDiv.innerHTML = '✓ Transaction PIN is SET';
+        textDiv.style.color = '#10b981';
+        msgDiv.innerHTML = 'Your transaction PIN is configured. You can change it below.';
+        setBtn.innerHTML = '<i class="fas fa-sync-alt"></i> Change Transaction PIN';
+        setBtn.style.background = '#f59e0b';
+    } else {
+        iconDiv.innerHTML = '<i class="fas fa-exclamation-triangle" style="color: #f59e0b;"></i>';
+        textDiv.innerHTML = '⚠ Transaction PIN is NOT SET';
+        textDiv.style.color = '#f59e0b';
+        msgDiv.innerHTML = 'Please set a transaction PIN to send money securely.';
+        setBtn.innerHTML = '<i class="fas fa-plus-circle"></i> Set Transaction PIN';
+        setBtn.style.background = 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)';
+    }
+}
+
+// Set/Reset PIN
+document.getElementById('setPinBtn').addEventListener('click', async () => {
+    const pin = document.getElementById('newTxnPin').value;
+    const confirm = document.getElementById('confirmTxnPin').value;
+    
+    if (!pin) { showToast('Please enter a PIN', true); return; }
+    if (pin !== confirm) { showToast('PINs do not match', true); return; }
+    if (!/^\d{4,6}$/.test(pin)) { showToast('PIN must be 4-6 digits only', true); return; }
+    
+    const btn = document.getElementById('setPinBtn');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+    
+    const result = await apiRequest('set_txn_pin.php', { txn_pin: pin });
+    
+    if (result && result.success) {
+        showToast(result.message);
+        document.getElementById('newTxnPin').value = '';
+        document.getElementById('confirmTxnPin').value = '';
+        await loadDashboard();
+        updatePinDisplay();
+    } else if (result) { showToast(result.message, true); }
+    
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+});
+
+// Modern Add Money Modal
+function showAddMoneyModal() {
+    const currentBalance = document.getElementById('balanceAmount').innerHTML;
+    const modalHtml = `
+        <div class="modern-modal" id="addMoneyModal">
+            <div class="modal-content">
+                <div class="modal-header"><h3><i class="fas fa-plus-circle"></i> Add Money</h3><p>Add funds to your PrimeBank account</p></div>
+                <div class="modal-body">
+                    <div class="current-balance"><div class="label">Current Balance</div><div class="amount">₹ ${currentBalance}</div></div>
+                    <div class="form-row"><label>Enter Amount (₹)</label><input type="number" id="modalAmount" placeholder="Enter amount" min="1" max="100000" style="font-size: 18px; font-weight: 600;"></div>
+                    <div class="quick-amount-grid">
+                        <div class="quick-amount-item" data-amount="500">₹500</div>
+                        <div class="quick-amount-item" data-amount="1000">₹1,000</div>
+                        <div class="quick-amount-item" data-amount="2000">₹2,000</div>
+                        <div class="quick-amount-item" data-amount="5000">₹5,000</div>
+                        <div class="quick-amount-item" data-amount="10000">₹10,000</div>
+                        <div class="quick-amount-item" data-amount="25000">₹25,000</div>
+                    </div>
+                    <div class="info-text" style="text-align: left;">Minimum: ₹1 | Maximum: ₹100,000</div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="cancelAddMoneyBtn">Cancel</button>
+                    <button class="btn btn-primary" id="confirmAddMoneyBtn">Add Money</button>
+                </div>
+            </div>
+        </div>
+    `;
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    document.querySelectorAll('.quick-amount-item').forEach(btn => {
+        btn.addEventListener('click', () => { document.getElementById('modalAmount').value = btn.getAttribute('data-amount'); });
+    });
+    document.getElementById('cancelAddMoneyBtn').addEventListener('click', () => { document.getElementById('addMoneyModal').remove(); });
+    document.getElementById('addMoneyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('addMoneyModal')) document.getElementById('addMoneyModal').remove(); });
+    document.getElementById('confirmAddMoneyBtn').addEventListener('click', async () => {
+        const amount = parseFloat(document.getElementById('modalAmount').value);
+        if (isNaN(amount) || amount <= 0) { showToast('Please enter a valid amount', true); return; }
+        if (amount > 100000) { showToast('Amount cannot exceed ₹100,000', true); return; }
+        const confirmBtn = document.getElementById('confirmAddMoneyBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        const result = await apiRequest('add_money.php', { amount });
+        if (result && result.success) {
+            showToast(result.message);
+            document.getElementById('addMoneyModal').remove();
+            loadDashboard();
+        } else if (result) { showToast(result.message, true); confirmBtn.disabled = false; confirmBtn.innerHTML = 'Add Money'; }
+    });
+}
+
+// Set default dates
+function setDefaultDates() {
+    const today = new Date();
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(today.getDate() - 30);
+    document.getElementById('toDate').value = today.toISOString().split('T')[0];
+    document.getElementById('fromDate').value = thirtyDaysAgo.toISOString().split('T')[0];
+}
+
+// Load statement
+function loadStatement() {
+    if (!allTransactions.length) return;
+    const fromDate = document.getElementById('fromDate').value;
+    const toDate = document.getElementById('toDate').value;
+    let filtered = allTransactions;
+    if (fromDate && toDate) {
+        filtered = allTransactions.filter(t => {
+            const transDate = t.date.split(' ')[0];
+            return transDate >= fromDate && transDate <= toDate;
+        });
+    }
+    let credits = 0, debits = 0;
+    filtered.forEach(t => {
+        if (t.type === 'Credit') credits += Number(t.amount);
+        else debits += Number(t.amount);
+    });
+    const opening = Number(currentUser.balance) - (credits - debits);
+    document.getElementById('openingBalance').innerHTML = opening.toFixed(2);
+    document.getElementById('statementTotalCredits').innerHTML = credits.toFixed(2);
+    document.getElementById('statementTotalDebits').innerHTML = debits.toFixed(2);
+    document.getElementById('closingBalance').innerHTML = (opening + credits - debits).toFixed(2);
+    document.getElementById('statementBody').innerHTML = filtered.map(t => `
+        <tr>
+            <td>${t.date}</td>
+            <td>${t.description}</td>
+            <td>${t.reference_id || '-'}</td>
+            <td class="${t.type === 'Credit' ? 'credit' : 'debit'}">${t.type === 'Credit' ? '+' : '-'} ₹${Number(t.amount).toFixed(2)}</td>
+            <td>₹${Number(t.balance_after).toFixed(2)}</td>
+        </tr>
+    `).join('');
+    if (filtered.length === 0) document.getElementById('statementBody').innerHTML = '<tr><td colspan="5">No transactions</td></tr>';
+}
+
+document.getElementById('applyFilterBtn')?.addEventListener('click', () => loadStatement());
+document.getElementById('resetFilterBtn')?.addEventListener('click', () => { setDefaultDates(); loadStatement(); });
+document.getElementById('downloadPdfBtn')?.addEventListener('click', () => downloadPDF());
+
+// Login
+document.getElementById('loginBtn').addEventListener('click', async function() {
+    const email = document.getElementById('loginEmail').value.trim();
+    const password = document.getElementById('loginPassword').value;
+    const otp = document.getElementById('loginOtp').value.trim();
+    const otpSection = document.getElementById('otpSection');
+    
+    if (!email || !password) { showToast('Enter email and password', true); return; }
+    
+    if (otpSent && otp) {
+        const result = await apiRequest('login.php', { email, password, otp });
+        if (result && result.success) {
+            currentUser = result.data;
+            localStorage.setItem('primebank_session', JSON.stringify(currentUser));
+            showToast('Login successful!');
+            await loadDashboard();
+        } else if (result) { showToast(result.message, true); document.getElementById('loginOtp').value = ''; }
+        return;
+    }
+    
+    if (email === 'demo@primebank.com') {
+        const result = await apiRequest('login.php', { email, password });
+        if (result && result.success) {
+            currentUser = result.data;
+            localStorage.setItem('primebank_session', JSON.stringify(currentUser));
+            showToast('Login successful!');
+            await loadDashboard();
+        } else { showToast('Invalid demo credentials', true); }
+        return;
+    }
+    
+    this.disabled = true;
+    this.textContent = 'Sending OTP...';
+    const result = await apiRequest('login.php', { email, password });
+    
+    if (result && result.require_otp) {
+        otpSent = true;
+        otpSection.style.display = 'block';
+        this.textContent = 'Verify OTP';
+        this.disabled = false;
+        document.getElementById('loginOtp').focus();
+        showToast('OTP sent to your email!');
+    } else if (result && result.success) {
+        currentUser = result.data;
+        localStorage.setItem('primebank_session', JSON.stringify(currentUser));
+        showToast('Login successful!');
+        await loadDashboard();
+    } else if (result) { showToast(result.message, true); this.disabled = false; this.textContent = 'Login'; }
+});
+
+document.getElementById('resendOtpBtn').addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail').value.trim();
+    if (!email) { showToast('Enter email first', true); return; }
+    const result = await apiRequest('send_otp.php', { email, purpose: 'login' });
+    if (result && result.success) { showToast('New OTP sent!'); document.getElementById('loginOtp').value = ''; }
+});
+
+// Register
+document.getElementById('sendRegOtpBtn').addEventListener('click', async () => {
+    const email = document.getElementById('regEmail').value.trim();
+    if (!email) { showToast('Enter email first', true); return; }
+    const result = await apiRequest('send_otp.php', { email, purpose: 'register' });
+    if (result && result.success) showToast('OTP sent!');
+});
+
+document.getElementById('registerBtn').addEventListener('click', async () => {
+    const name = document.getElementById('regName').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const phone = document.getElementById('regPhone').value.trim();
+    const password = document.getElementById('regPassword').value;
+    const otp = document.getElementById('regOtp').value.trim();
+    if (!name || !email || !phone || !password || !otp) { showToast('Fill all fields', true); return; }
+    const result = await apiRequest('register.php', { name, email, phone, password, otp });
+    if (result && result.success) {
+        showToast(result.message);
+        document.getElementById('showLoginLink').click();
+    } else if (result) { showToast(result.message, true); }
+});
+
+// Load Dashboard
+async function loadDashboard() {
+    const session = localStorage.getItem('primebank_session');
+    if (!session) { showAuth(); return; }
+    const userResult = await apiRequest('get_user.php', {});
+    if (!userResult || !userResult.success) { localStorage.removeItem('primebank_session'); showAuth(); return; }
+    currentUser = userResult.data;
+    document.getElementById('userName').innerHTML = currentUser.name;
+    document.getElementById('accountNumber').innerHTML = currentUser.account_number;
+    document.getElementById('balanceAmount').innerHTML = Number(currentUser.balance).toFixed(2);
+    document.getElementById('userAvatar').innerHTML = currentUser.name.charAt(0).toUpperCase();
+    document.getElementById('profileName').innerHTML = currentUser.name;
+    document.getElementById('profileEmail').innerHTML = currentUser.email;
+    document.getElementById('profilePhone').innerHTML = currentUser.phone;
+    document.getElementById('profileAccount').innerHTML = currentUser.account_number;
+    document.getElementById('profileUpi').innerHTML = currentUser.upi_id || 'Not set';
+    document.getElementById('memberSince').innerHTML = new Date().getFullYear();
+    document.getElementById('statementName').innerHTML = currentUser.name;
+    document.getElementById('statementAccount').innerHTML = currentUser.account_number;
+    document.getElementById('editName').value = currentUser.name;
+    document.getElementById('editPhone').value = currentUser.phone;
+    document.getElementById('upiIdDisplay').innerHTML = currentUser.upi_id || 'Not set';
+    
+    // Generate QR Code
+    if (currentUser.upi_id) {
+        generateQRCode(currentUser.upi_id, currentUser.name);
+    }
+    
+    updatePinDisplay();
+    const transResult = await apiRequest('get_transactions.php', {});
+    if (transResult && transResult.success) {
+        allTransactions = transResult.data;
+        let credits = 0, debits = 0;
+        allTransactions.forEach(t => {
+            if (t.type === 'Credit') credits += Number(t.amount);
+            else debits += Number(t.amount);
+        });
+        document.getElementById('totalCredits').innerHTML = credits.toFixed(2);
+        document.getElementById('totalDebits').innerHTML = debits.toFixed(2);
+        document.getElementById('recentTransactionsBody').innerHTML = allTransactions.slice(0, 5).map(t => `<tr><td>${t.date}</td><td>${t.description}</td><td class="${t.type === 'Credit' ? 'credit' : 'debit'}">${t.type === 'Credit' ? '+' : '-'} ₹${Number(t.amount).toFixed(2)}</td>`).join('');
+        document.getElementById('transferRecentBody').innerHTML = allTransactions.slice(0, 10).map(t => `<tr><td>${t.date}</td><td>${t.description}</td><td class="${t.type === 'Credit' ? 'credit' : 'debit'}">${t.type === 'Credit' ? '+' : '-'} ₹${Number(t.amount).toFixed(2)}</td>`).join('');
+        setDefaultDates();
+        loadStatement();
+    }
+    document.getElementById('authContainer').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+}
+
+function showAuth() {
+    document.getElementById('authContainer').style.display = 'flex';
+    document.getElementById('dashboard').style.display = 'none';
+    otpSent = false;
+    document.getElementById('otpSection').style.display = 'none';
+    document.getElementById('loginBtn').disabled = false;
+    document.getElementById('loginBtn').textContent = 'Login';
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPassword').value = '';
+    document.getElementById('loginOtp').value = '';
+}
+
+// Event Listeners
+document.getElementById('addMoneyBtn').addEventListener('click', () => { showAddMoneyModal(); });
+document.getElementById('sendMoneyNavBtn').addEventListener('click', () => { document.querySelector('.nav-link[data-page="transfer"]').click(); });
+
+document.getElementById('sendMoneyBtn').addEventListener('click', async () => {
+    const method = document.getElementById('transferMethod').value;
+    const recipient = document.getElementById('recipientId').value.trim();
+    const amount = parseFloat(document.getElementById('transferAmount').value);
+    const pin = document.getElementById('transactionPin').value;
+    if (!recipient || !amount || !pin) { showToast('Fill all fields', true); return; }
+    const result = await apiRequest('send_money.php', { method, recipient, amount, txn_pin: pin });
+    if (result && result.success) {
+        showToast(result.message);
+        document.getElementById('recipientId').value = '';
+        document.getElementById('transferAmount').value = '';
+        document.getElementById('transactionPin').value = '';
+        loadDashboard();
+        document.querySelector('.nav-link[data-page="dashboard"]').click();
+    } else if (result) { showToast(result.message, true); }
+});
+
+document.getElementById('updateProfileBtn').addEventListener('click', async () => {
+    const name = document.getElementById('editName').value.trim();
+    const phone = document.getElementById('editPhone').value.trim();
+    if (!name || !phone) { showToast('Fill all fields', true); return; }
+    const result = await apiRequest('update_profile.php', { name, phone });
+    if (result && result.success) { showToast(result.message); loadDashboard(); }
+    else if (result) showToast(result.message, true);
+});
+
+document.getElementById('changePwdBtn').addEventListener('click', async () => {
+    const current = document.getElementById('currentPassword').value;
+    const newPwd = document.getElementById('newPassword').value;
+    const confirm = document.getElementById('confirmPassword').value;
+    if (!current || !newPwd) { showToast('Fill all fields', true); return; }
+    if (newPwd !== confirm) { showToast('Passwords do not match', true); return; }
+    if (newPwd.length < 4) { showToast('Password must be at least 4 characters', true); return; }
+    const result = await apiRequest('change_password.php', { current_password: current, new_password: newPwd });
+    if (result && result.success) {
+        showToast(result.message);
+        document.getElementById('currentPassword').value = '';
+        document.getElementById('newPassword').value = '';
+        document.getElementById('confirmPassword').value = '';
+    } else if (result) { showToast(result.message, true); }
+});
+
+document.getElementById('logoutBtn').addEventListener('click', async () => {
+    await apiRequest('logout.php', {});
+    localStorage.removeItem('primebank_session');
+    showAuth();
+    showToast('Logged out');
+});
+
+document.getElementById('showRegisterLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('loginFormDiv').classList.add('hidden');
+    document.getElementById('registerFormDiv').classList.remove('hidden');
+});
+
+document.getElementById('showLoginLink').addEventListener('click', (e) => {
+    e.preventDefault();
+    document.getElementById('loginFormDiv').classList.remove('hidden');
+    document.getElementById('registerFormDiv').classList.add('hidden');
+    otpSent = false;
+    document.getElementById('otpSection').style.display = 'none';
+    document.getElementById('loginBtn').textContent = 'Login';
+});
+
+// Initialize
+document.addEventListener('DOMContentLoaded', async () => {
+    const session = localStorage.getItem('primebank_session');
+    if (session) await loadDashboard();
+    else showAuth();
+});
+</script>
+</body>
+</html>
