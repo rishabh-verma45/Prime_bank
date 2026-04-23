@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PrimeBank - Secure Banking</title>
+    <title>PrimeBank - Secure Banking with Rewards</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
@@ -27,14 +27,20 @@
         .toast.show { transform: translateX(0); }
         .toast.error { background: #dc2626; }
         .toast.success { background: #10b981; }
+        .toast.reward { background: #f59e0b; }
 
         .auth-container {
             min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
             padding: 20px;
+            position: relative;
+            background: linear-gradient(135deg, rgba(0,0,0,0.6), rgba(0,0,0,0.4)), 
+                        url("images.jpg");
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
         }
         .auth-card {
             background: white;
@@ -72,10 +78,6 @@
         .btn-primary:hover { transform: translateY(-1px); }
         .btn-outline { background: transparent; border: 1.5px solid #cbd5e1; color: #1e293b; }
         .btn-outline:hover { background: #f8fafc; }
-        .btn-success { background: #10b981; color: white; }
-        .btn-success:hover { background: #059669; }
-        .btn-warning { background: #f59e0b; color: white; }
-        .btn-warning:hover { background: #d97706; }
         
         .otp-section {
             background: #f8fafc;
@@ -95,14 +97,14 @@
         .hidden { display: none; }
 
         /* Dashboard */
-        .dashboard { display: none; }
+        .dashboard { display: none; background: url("download.jpg"); }
         .sidebar {
             position: fixed;
             left: 0;
             top: 0;
             width: 280px;
             height: 100%;
-            background: white;
+            background: rgb(255, 255, 255);
             box-shadow: 2px 0 12px rgba(0,0,0,0.05);
             padding: 30px 20px;
             overflow-y: auto;
@@ -181,26 +183,10 @@
             text-align: center;
             box-shadow: 0 2px 8px rgba(0,0,0,0.04);
         }
-        .qr-card h4 {
-            color: #1e293b;
-            margin-bottom: 15px;
-            font-size: 16px;
-        }
-        .qr-code {
-            background: white;
-            padding: 15px;
-            border-radius: 16px;
-            display: inline-block;
-            margin-bottom: 10px;
-        }
-        .upi-id {
-            font-size: 14px;
-            color: #64748b;
-            margin-top: 10px;
-        }
-        .upi-id strong {
-            color: #1e293b;
-        }
+        .qr-card h4 { color: #1e293b; margin-bottom: 15px; font-size: 16px; }
+        .qr-code { background: white; padding: 15px; border-radius: 16px; display: inline-block; margin-bottom: 10px; }
+        .upi-id { font-size: 14px; color: #64748b; margin-top: 10px; }
+        .upi-id strong { color: #1e293b; }
         
         .balance-label { font-size: 14px; opacity: 0.9; margin-bottom: 10px; }
         .balance-amount { font-size: 48px; font-weight: 800; margin: 15px 0; }
@@ -216,6 +202,30 @@
             gap: 8px;
         }
         .action-btn:hover { background: rgba(255,255,255,0.3); }
+
+        /* Rewards Card */
+        .rewards-card {
+            background: linear-gradient(135deg, #f59e0b 0%, #ef4444 100%);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 25px;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .rewards-info h4 { font-size: 16px; margin-bottom: 5px; }
+        .rewards-amount { font-size: 28px; font-weight: 800; }
+        .claim-btn {
+            background: white;
+            color: #f59e0b;
+            padding: 10px 20px;
+            border-radius: 40px;
+            cursor: pointer;
+            font-weight: 600;
+            border: none;
+        }
+        .claim-btn:hover { transform: scale(1.05); }
 
         .stats-grid {
             display: grid;
@@ -248,6 +258,35 @@
             justify-content: space-between;
             align-items: center;
         }
+
+        /* Bank Selection Cards */
+        .bank-selection {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        .bank-card {
+            background: white;
+            border-radius: 20px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            border: 2px solid #e2e8f0;
+        }
+        .bank-card:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+        }
+        .bank-card.selected {
+            border-color: #10b981;
+            background: #f0fdf4;
+        }
+        .bank-icon { font-size: 48px; margin-bottom: 10px; }
+        .bank-name { font-size: 16px; font-weight: 700; color: #1e293b; }
+        .bank-account { font-size: 12px; color: #64748b; margin-top: 5px; }
 
         .profile-info {
             display: grid;
@@ -309,7 +348,6 @@
         .summary-label { font-size: 12px; color: #64748b; margin-bottom: 5px; }
         .summary-value { font-size: 20px; font-weight: 700; color: #1e293b; }
 
-        /* PIN Status Card */
         .pin-status-card {
             background: #f8fafc;
             border-radius: 20px;
@@ -395,9 +433,11 @@
             .sidebar .logo span, .sidebar .nav-link span { display: none; }
             .main-content { margin-left: 80px; }
             .dashboard-grid { grid-template-columns: 1fr; }
+            .bank-selection { grid-template-columns: 1fr; }
             .stats-grid, .summary-grid { grid-template-columns: repeat(2, 1fr); }
             .profile-info { grid-template-columns: 1fr; }
             .date-filter-row { flex-direction: column; }
+            .rewards-card { flex-direction: column; text-align: center; gap: 15px; }
         }
     </style>
 </head>
@@ -410,7 +450,7 @@
     <div class="auth-card">
         <div class="auth-logo">
             <h1>🏦 PrimeBank</h1>
-            <p>Secure Banking with Email OTP</p>
+            <p>Secure Banking with Email OTP & Rewards</p>
         </div>
         
         <div id="loginFormDiv">
@@ -495,6 +535,18 @@
                 </div>
             </div>
 
+            <!-- Rewards Card -->
+            <div class="rewards-card" id="rewardsCard" style="display: none;">
+                <div class="rewards-info">
+                    <h4><i class="fas fa-gift"></i> Cashback Reward Available!</h4>
+                    <p>You earned cashback on your transaction</p>
+                </div>
+                <div>
+                    <div class="rewards-amount" id="rewardAmount">₹0</div>
+                    <button class="claim-btn" id="claimRewardBtn"><i class="fas fa-hand-holding-usd"></i> Claim Now</button>
+                </div>
+            </div>
+
             <div class="stats-grid">
                 <div class="stat-card"><div class="stat-label">Total Credits</div><div class="stat-value">+ ₹ <span id="totalCredits">0</span></div></div>
                 <div class="stat-card"><div class="stat-label">Total Debits</div><div class="stat-value">- ₹ <span id="totalDebits">0</span></div></div>
@@ -564,8 +616,8 @@
                         <div class="stat-card"><div class="stat-label">Closing</div><div class="stat-value">₹ <span id="closingBalance">0</span></div></div>
                     </div>
                     <table class="transaction-table" id="statementTable">
-                        <thead><tr><th>Date</th><th>Description</th><th>Reference ID</th><th>Amount</th><th>Balance</th></tr></thead>
-                        <tbody id="statementBody"><tr><td colspan="5">Select date range and click Apply Filter</td></tr></tbody>
+                        <thead><tr><th>Date</th><th>Description</th><th>Reference ID</th><th>Amount</th><th>Balance</th><tr></thead>
+                        <tbody id="statementBody"><td><td colspan="5">Select date range and click Apply Filter</td</tr></tbody>
                     </table>
                 </div>
             </div>
@@ -598,7 +650,7 @@
             <div class="content-card">
                 <div class="card-title">Recent Transfers</div>
                 <table class="transaction-table"><thead><tr><th>Date</th><th>Description</th><th>Amount</th></tr></thead>
-                <tbody id="transferRecentBody"><tr><td colspan="3">No transfers</td></tr></tbody></table>
+                <tbody id="transferRecentBody"><tr><td colspan="3">No transfers</td</tr></tbody></table>
             </div>
         </div>
 
@@ -640,16 +692,197 @@ const API_BASE = '/primebank/php/';
 let currentUser = null;
 let otpSent = false;
 let allTransactions = [];
+let pendingReward = 0;
+let selectedBank = null;
 let qrCode = null;
 
-function showToast(msg, isError = false) {
+// Dummy Bank Accounts
+const bankAccounts = [
+    { id: 1, name: "HDFC Bank", accountNo: "HDFCXXXXXXXX1234", icon: "fa-university", color: "#0048D9" },
+    { id: 2, name: "ICICI Bank", accountNo: "ICICIXXXXXX5678", icon: "fa-building", color: "#FF6B6B" }
+];
+
+function showToast(msg, isError = false, isReward = false) {
     const toast = document.getElementById('toast');
     toast.textContent = msg;
     toast.className = 'toast';
     if (isError) toast.classList.add('error');
+    else if (isReward) toast.classList.add('reward');
     else toast.classList.add('success');
     toast.classList.add('show');
     setTimeout(() => toast.classList.remove('show'), 3000);
+}
+
+// Calculate cashback based on amount sent (only on send money)
+function calculateCashback(amount) {
+    let cashbackRate = 0;
+    if (amount <= 1000) {
+        cashbackRate = 5; // 5% for transactions up to ₹1000
+    } else {
+        cashbackRate = 10; // 10% for transactions above ₹1000
+    }
+    
+    let cashback = (amount * cashbackRate) / 100;
+    // Cap cashback at ₹200
+    if (cashback > 200) {
+        cashback = 200;
+    }
+    return { cashback: Math.floor(cashback), rate: cashbackRate };
+}
+
+// Show reward notification (only on send money)
+function showRewardNotification(amount, rate) {
+    pendingReward = amount;
+    document.getElementById('rewardAmount').innerHTML = `₹${amount}`;
+    document.getElementById('rewardsCard').style.display = 'flex';
+    showToast(`🎉 You earned ${rate}% cashback (₹${amount}) on your sent payment! Click Claim to add to your balance.`, false, true);
+}
+
+// Claim reward
+document.getElementById('claimRewardBtn').addEventListener('click', async () => {
+    if (pendingReward > 0) {
+        const result = await apiRequest('add_money.php', { amount: pendingReward });
+        if (result && result.success) {
+            showToast(`🎉 ₹${pendingReward} cashback added to your account!`, false, true);
+            document.getElementById('rewardsCard').style.display = 'none';
+            await loadDashboard();
+            pendingReward = 0;
+        } else {
+            showToast('Failed to claim reward. Please try again.', true);
+        }
+    }
+});
+
+// Add Money with Bank Selection
+function showAddMoneyModal() {
+    // First show bank selection
+    const bankSelectionHtml = `
+        <div class="modern-modal" id="bankSelectionModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-university"></i> Select Bank Account</h3>
+                    <p>Choose a bank to add money from</p>
+                </div>
+                <div class="modal-body">
+                    <div class="bank-selection">
+                        ${bankAccounts.map(bank => `
+                            <div class="bank-card" data-bank-id="${bank.id}">
+                                <div class="bank-icon"><i class="fas ${bank.icon}" style="color: ${bank.color};"></i></div>
+                                <div class="bank-name">${bank.name}</div>
+                                <div class="bank-account">${bank.accountNo}</div>
+                            </div>
+                        `).join('')}
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="cancelBankBtn">Cancel</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', bankSelectionHtml);
+    
+    // Handle bank selection
+    document.querySelectorAll('.bank-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const bankId = parseInt(card.dataset.bankId);
+            selectedBank = bankAccounts.find(b => b.id === bankId);
+            
+            // Highlight selected
+            document.querySelectorAll('.bank-card').forEach(c => c.classList.remove('selected'));
+            card.classList.add('selected');
+            
+            // Show amount entry modal
+            document.getElementById('bankSelectionModal').remove();
+            showAmountEntryModal();
+        });
+    });
+    
+    document.getElementById('cancelBankBtn').addEventListener('click', () => {
+        document.getElementById('bankSelectionModal').remove();
+    });
+}
+
+// Show amount entry modal after bank selection
+function showAmountEntryModal() {
+    const currentBalance = document.getElementById('balanceAmount').innerHTML;
+    const modalHtml = `
+        <div class="modern-modal" id="amountModal">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h3><i class="fas fa-plus-circle"></i> Add Money</h3>
+                    <p>From: ${selectedBank.name} (${selectedBank.accountNo})</p>
+                </div>
+                <div class="modal-body">
+                    <div class="current-balance">
+                        <div class="label">Current Balance</div>
+                        <div class="amount">₹ ${currentBalance}</div>
+                    </div>
+                    <div class="form-row">
+                        <label>Enter Amount (₹)</label>
+                        <input type="number" id="modalAmount" placeholder="Enter amount" min="1" max="100000" style="font-size: 18px; font-weight: 600;">
+                    </div>
+                    <div class="quick-amount-grid">
+                        <div class="quick-amount-item" data-amount="500">₹500</div>
+                        <div class="quick-amount-item" data-amount="1000">₹1,000</div>
+                        <div class="quick-amount-item" data-amount="2000">₹2,000</div>
+                        <div class="quick-amount-item" data-amount="5000">₹5,000</div>
+                        <div class="quick-amount-item" data-amount="10000">₹10,000</div>
+                        <div class="quick-amount-item" data-amount="25000">₹25,000</div>
+                    </div>
+                    <div class="info-text" style="text-align: left; margin-top: 15px;">
+                        <i class="fas fa-info-circle"></i> Cashback is earned when you SEND money, not when you add money.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button class="btn btn-outline" id="backToBankBtn">Back</button>
+                    <button class="btn btn-primary" id="confirmAddMoneyBtn">Add Money</button>
+                </div>
+            </div>
+        </div>
+    `;
+    
+    document.body.insertAdjacentHTML('beforeend', modalHtml);
+    
+    document.querySelectorAll('.quick-amount-item').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.getElementById('modalAmount').value = btn.getAttribute('data-amount');
+        });
+    });
+    
+    document.getElementById('backToBankBtn').addEventListener('click', () => {
+        document.getElementById('amountModal').remove();
+        showAddMoneyModal();
+    });
+    
+    document.getElementById('confirmAddMoneyBtn').addEventListener('click', async () => {
+        const amount = parseFloat(document.getElementById('modalAmount').value);
+        if (isNaN(amount) || amount <= 0) {
+            showToast('Please enter a valid amount', true);
+            return;
+        }
+        if (amount > 100000) {
+            showToast('Amount cannot exceed ₹100,000', true);
+            return;
+        }
+        
+        const confirmBtn = document.getElementById('confirmAddMoneyBtn');
+        confirmBtn.disabled = true;
+        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+        
+        const result = await apiRequest('add_money.php', { amount });
+        
+        if (result && result.success) {
+            showToast(`₹${amount} added successfully from ${selectedBank.name}!`, false);
+            document.getElementById('amountModal').remove();
+            loadDashboard();
+        } else if (result) {
+            showToast(result.message, true);
+            confirmBtn.disabled = false;
+            confirmBtn.innerHTML = 'Add Money';
+        }
+    });
 }
 
 async function apiRequest(endpoint, data) {
@@ -668,7 +901,6 @@ async function apiRequest(endpoint, data) {
 
 // Generate QR Code
 function generateQRCode(upiId, name, amount = '') {
-    // UPI QR Code format: upi://pay?pa=UPI_ID&pn=NAME&am=AMOUNT&cu=INR
     let upiUrl = `upi://pay?pa=${upiId}&pn=${encodeURIComponent(name)}&cu=INR`;
     if (amount && amount > 0) {
         upiUrl += `&am=${amount}`;
@@ -776,55 +1008,6 @@ document.getElementById('setPinBtn').addEventListener('click', async () => {
     btn.innerHTML = originalText;
 });
 
-// Modern Add Money Modal
-function showAddMoneyModal() {
-    const currentBalance = document.getElementById('balanceAmount').innerHTML;
-    const modalHtml = `
-        <div class="modern-modal" id="addMoneyModal">
-            <div class="modal-content">
-                <div class="modal-header"><h3><i class="fas fa-plus-circle"></i> Add Money</h3><p>Add funds to your PrimeBank account</p></div>
-                <div class="modal-body">
-                    <div class="current-balance"><div class="label">Current Balance</div><div class="amount">₹ ${currentBalance}</div></div>
-                    <div class="form-row"><label>Enter Amount (₹)</label><input type="number" id="modalAmount" placeholder="Enter amount" min="1" max="100000" style="font-size: 18px; font-weight: 600;"></div>
-                    <div class="quick-amount-grid">
-                        <div class="quick-amount-item" data-amount="500">₹500</div>
-                        <div class="quick-amount-item" data-amount="1000">₹1,000</div>
-                        <div class="quick-amount-item" data-amount="2000">₹2,000</div>
-                        <div class="quick-amount-item" data-amount="5000">₹5,000</div>
-                        <div class="quick-amount-item" data-amount="10000">₹10,000</div>
-                        <div class="quick-amount-item" data-amount="25000">₹25,000</div>
-                    </div>
-                    <div class="info-text" style="text-align: left;">Minimum: ₹1 | Maximum: ₹100,000</div>
-                </div>
-                <div class="modal-footer">
-                    <button class="btn btn-outline" id="cancelAddMoneyBtn">Cancel</button>
-                    <button class="btn btn-primary" id="confirmAddMoneyBtn">Add Money</button>
-                </div>
-            </div>
-        </div>
-    `;
-    document.body.insertAdjacentHTML('beforeend', modalHtml);
-    document.querySelectorAll('.quick-amount-item').forEach(btn => {
-        btn.addEventListener('click', () => { document.getElementById('modalAmount').value = btn.getAttribute('data-amount'); });
-    });
-    document.getElementById('cancelAddMoneyBtn').addEventListener('click', () => { document.getElementById('addMoneyModal').remove(); });
-    document.getElementById('addMoneyModal').addEventListener('click', (e) => { if (e.target === document.getElementById('addMoneyModal')) document.getElementById('addMoneyModal').remove(); });
-    document.getElementById('confirmAddMoneyBtn').addEventListener('click', async () => {
-        const amount = parseFloat(document.getElementById('modalAmount').value);
-        if (isNaN(amount) || amount <= 0) { showToast('Please enter a valid amount', true); return; }
-        if (amount > 100000) { showToast('Amount cannot exceed ₹100,000', true); return; }
-        const confirmBtn = document.getElementById('confirmAddMoneyBtn');
-        confirmBtn.disabled = true;
-        confirmBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
-        const result = await apiRequest('add_money.php', { amount });
-        if (result && result.success) {
-            showToast(result.message);
-            document.getElementById('addMoneyModal').remove();
-            loadDashboard();
-        } else if (result) { showToast(result.message, true); confirmBtn.disabled = false; confirmBtn.innerHTML = 'Add Money'; }
-    });
-}
-
 // Set default dates
 function setDefaultDates() {
     const today = new Date();
@@ -865,7 +1048,7 @@ function loadStatement() {
             <td>₹${Number(t.balance_after).toFixed(2)}</td>
         </tr>
     `).join('');
-    if (filtered.length === 0) document.getElementById('statementBody').innerHTML = '<tr><td colspan="5">No transactions</td></tr>';
+    if (filtered.length === 0) document.getElementById('statementBody').innerHTML = '<tr><td colspan="5">No transactions</td</tr>';
 }
 
 document.getElementById('applyFilterBtn')?.addEventListener('click', () => loadStatement());
@@ -1021,15 +1204,31 @@ document.getElementById('sendMoneyBtn').addEventListener('click', async () => {
     const amount = parseFloat(document.getElementById('transferAmount').value);
     const pin = document.getElementById('transactionPin').value;
     if (!recipient || !amount || !pin) { showToast('Fill all fields', true); return; }
+    
+    const sendBtn = document.getElementById('sendMoneyBtn');
+    sendBtn.disabled = true;
+    sendBtn.textContent = 'Processing...';
+    
     const result = await apiRequest('send_money.php', { method, recipient, amount, txn_pin: pin });
+    
     if (result && result.success) {
+        // Calculate cashback reward on successful send
+        const { cashback, rate } = calculateCashback(amount);
+        if (cashback > 0) {
+            showRewardNotification(cashback, rate);
+        }
         showToast(result.message);
         document.getElementById('recipientId').value = '';
         document.getElementById('transferAmount').value = '';
         document.getElementById('transactionPin').value = '';
         loadDashboard();
         document.querySelector('.nav-link[data-page="dashboard"]').click();
-    } else if (result) { showToast(result.message, true); }
+    } else if (result) {
+        showToast(result.message, true);
+    }
+    
+    sendBtn.disabled = false;
+    sendBtn.textContent = 'Send Money';
 });
 
 document.getElementById('updateProfileBtn').addEventListener('click', async () => {
@@ -1081,6 +1280,7 @@ document.getElementById('showLoginLink').addEventListener('click', (e) => {
 
 // Initialize
 document.addEventListener('DOMContentLoaded', async () => {
+    document.getElementById('rewardsCard').style.display = 'none';
     const session = localStorage.getItem('primebank_session');
     if (session) await loadDashboard();
     else showAuth();
